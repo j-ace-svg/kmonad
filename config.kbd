@@ -1,0 +1,144 @@
+;;                      Realer Programmer's Dvorak
+;;
+;; KMonad variation of Real Programmer Dvorak with home row mods and such.
+;; Based on Michael Paulson's poor ideas.
+;;
+;; Template for a new layer:
+;;
+;; (deflayer name
+;;   _    _    _    _    _         _    _    _    _         _    _    _    _         _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _         _         _    _    _         _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _    _         _         _    _    _         _    _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _    _              _                             _    _    _
+;;   _    _    _    _    _    _    _    _    _    _    _                   _              _              _    _    _    _
+;;   _    _    _              _              _    _    _                   _         _    _    _         _         _
+;; )
+;;
+;; Template for a QWERTY layer:
+;;
+;; (deflayer name
+;;   esc  f1   f2   f3   f4        f5   f6   f7   f8        f9   f10  f11  f12       @prt slck pause
+;;   `    1    2    3    4    5    6    7    8    9    0    -    =         bspc      ins  home pgup      nlck kp/  kp*  kp-
+;;   tab  q    w    e    r    t    y    u    i    o    p    [    ]         bksl      del  end  pgdn      kp7  kp8  kp9  kp+
+;;   caps a    s    d    f    g    h    j    k    l    ;    '              ret                           kp4  kp5  kp6
+;;   lsft z    x    c    v    b    n    m    ,    .    /                   rsft           up             kp1  kp2  kp3  kprt
+;;   lctl lmet lalt           spc            ralt rmet cmp                 rctl      left down rght      kp0       kp.
+;; )
+;;
+;; Template for a Dvorak layer:
+;;
+;; (deflayer name
+;;   esc  f1   f2   f3   f4        f5   f6   f7   f8        f9   f10  f11  f12        @prt slck pause
+;;   $    +    [    {    \(   &    =    \)   }    ]    *    !    |         bspc       ins  home pgup      nlck kp/  kp*  kp-
+;;   tab  ;    ,    .    p    y    f    g    c    r    l    /    @         \          del  end  pgdn      kp7  kp8  kp9  kp+
+;;   caps a    o    e    u    i    d    h    t    n    s    -              ret                            kp4  kp5  kp6
+;;   @lsl '    q    j    k    x    b    m    w    v    z                   @rsl            up             kp1  kp2  kp3  kprt
+;;   lctl lmet lalt           spc            ralt rmet cmp                 rctl       left down rght      kp0       kp.
+;; )
+
+(defcfg
+  input (device-file "/dev/input/by-id/usb-Dell_Dell_USB_Entry_Keyboard-event-kbd")
+  output (uinput-sink "Kmonad: Dell"))
+
+;;; Aliases
+
+;; In order to enable dense layout, rename everything >4 chars so I can do 5
+;; char columns.
+
+;; Layer aliases
+(defalias
+  lsl (around (layer-toggle rpdv-lsft) lsft)
+  rsl (around (layer-toggle rpdv-rsft) rsft)
+  dvk (layer-switch rpdv)
+  qwt (layer-switch qwerty))
+
+;; Functions
+(defalias
+  amt (tap-next a lmet)
+  oal (tap-next o lalt)
+  ect (tap-next e caps)
+  usf (tap-next u @lsl)
+  hsf (tap-next h @rsl)
+  tct (tap-next t rctl)
+  nal (tap-next n ralt)
+  smt (tap-next s rmet))
+
+;; Shifted Dvorak keys
+(defalias
+  ls0 #(lsft 0)
+  rs0 #(rsft 0)
+  ls1 #(lsft 1)
+  rs1 #(rsft 1)
+  ls2 #(lsft 2)
+  rs2 #(rsft 2)
+  ls3 #(lsft 3)
+  rs3 #(rsft 3)
+  ls4 #(lsft 4)
+  rs4 #(rsft 4)
+  ls5 #(lsft 5)
+  rs5 #(rsft 5)
+  ls6 #(lsft 6)
+  rs6 #(rsft 6)
+  ls7 #(lsft 7)
+  rs7 #(rsft 7)
+  ls8 #(lsft 8)
+  rs8 #(rsft 8)
+  ls9 #(lsft 9)
+  rs9 #(rsft 9)
+)
+
+;; Misc
+(defalias
+  prt sysrq)
+
+;;; Layers
+
+;; Source layer - used to set the default keys to be overwritten later. Not an
+;; actual layer in the layout.
+
+(defsrc
+  esc  f1   f2   f3   f4        f5   f6   f7   f8        f9   f10  f11  f12       sysrq slck pause
+  `    1    2    3    4    5    6    7    8    9    0    -    =         bspc      ins   home pgup      nlck kp/  kp*  kp-
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]         bksl      del   end  pgdn      kp7  kp8  kp9  kp+
+  caps a    s    d    f    g    h    j    k    l    ;    '              ret                            kp4  kp5  kp6
+  lsft z    x    c    v    b    n    m    ,    .    /                   rsft            up             kp1  kp2  kp3  kprt
+  lctl lmet lalt           spc            ralt rmet cmp                 rctl      left  down rght      kp0       kp.
+)
+
+(deflayer rpdv
+  esc  f1   f2   f3   f4        f5   f6   f7   f8        f9   f10  f11  f12       @prt @qwt pause
+  $    +    [    {    \(   &    =    \)   }    ]    *    !    |         bspc      ins  home pgup      nlck kp/  kp*  kp-
+  tab  ;    ,    .    p    y    f    g    c    r    l    /    @         \         del  end  pgdn      kp7  kp8  kp9  kp+
+  caps @amt @oal @ect @usf i    d    @hsf @tct @nal @smt -              ret                           kp4  kp5  kp6
+  @lsl '    q    j    k    x    b    m    w    v    z                   @rsl           up             kp1  kp2  kp3  kprt
+  lctl lmet lalt           spc            ralt rmet cmp                 rctl      left down rght      kp0       kp.
+)
+
+(deflayer rpdv-lsft
+  _    _    _    _    _         _    _    _    _         _    _    _    _         _    _    _
+  ~    @ls1 @ls2 @ls3 @ls4 @ls5 @ls6 @ls7 @ls8 @ls9 @ls0 %    `         _         _    _    _         _    _    _    _
+  _    :    <    >    P    Y    F    G    C    R    L    ?    ^         #         _    _    _         _    _    _    _
+  _    A    O    E    U    I    D    H    T    N    S    \_             _                             _    _    _
+  _    "    Q    J    K    X    B    M    W    V    Z                   _              _              _    _    _    _
+  _    _    _              _              _    _    _                   _         _    _    _         _         _
+)
+
+(deflayer rpdv-rsft
+  _    _    _    _    _         _    _    _    _         _    _    _    _         _    _    _
+  ~    @ls1 @ls2 @ls3 @ls4 @ls5 @ls6 @ls7 @ls8 @ls9 @ls0 %    `         _         _    _    _         _    _    _    _
+  _    :    <    >    P    Y    F    G    C    R    L    ?    ^         #         _    _    _         _    _    _    _
+  _    A    O    E    U    I    D    H    T    N    S    \_             _                             _    _    _
+  _    "    Q    J    K    X    B    M    W    V    Z                   _              _              _    _    _    _
+  _    _    _              _              _    _    _                   _         _    _    _         _         _
+)
+
+(deflayer qwerty
+  esc  f1   f2   f3   f4        f5   f6   f7   f8        f9   f10  f11  f12       @prt @dvk pause
+  `    1    2    3    4    5    6    7    8    9    0    -    =         bspc      ins  home pgup      nlck kp/  kp*  kp-
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]         bksl      del  end  pgdn      kp7  kp8  kp9  kp+
+  caps a    s    d    f    g    h    j    k    l    ;    '              ret                           kp4  kp5  kp6
+  lsft z    x    c    v    b    n    m    ,    .    /                   rsft           up             kp1  kp2  kp3  kprt
+  lctl lmet lalt           spc            ralt rmet cmp                 rctl      left down rght      kp0       kp.
+)
+
+;; vim: tabstop=2 shiftwidth=2
